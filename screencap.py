@@ -4,6 +4,7 @@ from ctypes import windll
 import win32gui
 import win32ui
 
+
 def capture_window(window_title="Age of Empires IV "):
     # Ensure the process is DPI-aware
     windll.user32.SetProcessDPIAware()
@@ -34,7 +35,8 @@ def capture_window(window_title="Age of Empires IV "):
     # Convert the bitmap to a NumPy array
     bmp_info = bitmap.GetInfo()
     bmp_str = bitmap.GetBitmapBits(True)
-    img = np.frombuffer(bmp_str, dtype=np.uint8).reshape((bmp_info["bmHeight"], bmp_info["bmWidth"], 4))
+    img = np.frombuffer(bmp_str, dtype=np.uint8).reshape(
+        (bmp_info["bmHeight"], bmp_info["bmWidth"], 4))
 
     # Drop the alpha channel and make the image contiguous
     img = np.ascontiguousarray(img[..., :3])  # Keep only RGB channels
@@ -49,29 +51,3 @@ def capture_window(window_title="Age of Empires IV "):
         raise RuntimeError(f"Unable to acquire screenshot! Result: {result}")
 
     return img
-
-
-# Initial crop region (percentages)
-crop_region = {
-    "x": 1.7187500000000002,  # Left
-    "y": 79.16666666666666,   # Top
-    "width": 7.708333333333332,  # Width
-    "height": 19.074074074074076  # Height
-}
-
-# Function to crop the screenshot to the initial crop region
-def crop_to_initial_region(screenshot, crop_region=crop_region):
-    """
-    Crop the screenshot to the initial crop region.
-    
-    :param screenshot: The full screenshot as a NumPy array.
-    :param crop_region: A dictionary with "x", "y", "width", "height" in percentages.
-    :return: Cropped screenshot as a NumPy array.
-    """
-    height, width = screenshot.shape[:2]
-    
-    x = int(crop_region["x"] * width / 100)  # Convert percentage to pixels
-    y = int(crop_region["y"] * height / 100)
-    w = int(crop_region["width"] * width / 100)
-    h = int(crop_region["height"] * height / 100)
-    return screenshot[y:y+h, x:x+w]

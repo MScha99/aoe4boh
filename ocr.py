@@ -78,7 +78,7 @@ def preprocess_image(cropped_image, scale=2, grayscale=True, contrast=2.0,
 
 def ocr_onto_cropped_areas(ingame_screenshot, worker_location_on_screen=worker_location_on_screen, screen_width=1920, screen_height=1080, debug=False):
     results = {}
-    ingame_screenshot = preprocess_image(ingame_screenshot)
+    ingame_screenshot = ingame_screenshot
 
     # Create a debug image if debug mode is enabled
     if debug:
@@ -91,21 +91,17 @@ def ocr_onto_cropped_areas(ingame_screenshot, worker_location_on_screen=worker_l
         width = int(region["width"] * ingame_screenshot.shape[1] / 100)
         height = int(region["height"] * ingame_screenshot.shape[0] / 100)
 
-        # Ensure the region is within the bounds of the screenshot
-        if x < 0 or y < 0 or width <= 0 or height <= 0 or x + width > screen_width or y + height > screen_height:
-            print(f"Warning: Region '{region_name}' is out of bounds. Skipping.")
-            return region_name, ""
-
         # Crop the region from the screenshot
         cropped_image = ingame_screenshot[y:y+height, x:x+width]
 
         # Check if the cropped image is valid
         if cropped_image is None or cropped_image.size == 0:
-            print(f"Warning: Cropped image for region '{region_name}' is empty. Skipping.")
+            print(f"Warning: Cropped image for region '{ 
+                  region_name}' is empty. Skipping.")
             return region_name, ""
 
         # Preprocess the image
-        preprocessed_image = cropped_image
+        preprocessed_image = preprocess_image(cropped_image)
 
         # Perform OCR on the cropped, preprocessed image
         text = pytesseract.image_to_string(
@@ -116,9 +112,11 @@ def ocr_onto_cropped_areas(ingame_screenshot, worker_location_on_screen=worker_l
         # Add debug information to the debug image
         if debug:
             # Draw the region bounding box
-            cv2.rectangle(debug_image, (x, y), (x + width, y + height), (0, 255, 0), 2)
+            cv2.rectangle(debug_image, (x, y),
+                          (x + width, y + height), (0, 255, 0), 2)
             # Add OCR text as a label
-            cv2.putText(debug_image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(debug_image, text, (x, y - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         return region_name, text
 
@@ -132,7 +130,7 @@ def ocr_onto_cropped_areas(ingame_screenshot, worker_location_on_screen=worker_l
 
     # Display the debug image if debug mode is enabled
     if debug:
-        cv2.imshow("Debug: OCR Regions", debug_image)
+        cv2.imshow("Debug: OCR Regions", debug_image[600:, 0:600])
         cv2.waitKey(0)  # Wait for a key press to close the debug window
         cv2.destroyAllWindows()
 
