@@ -7,7 +7,7 @@ from screencap import capture_window
 import time  # Import the time module
 from tkinter import *
 from tkinter import ttk
-from gui import test_gui
+from gui import TestGUI
 
 monitors = get_monitors()
 
@@ -27,5 +27,5 @@ monitors = get_monitors()
 # print(results['population'])
  
 root = Tk()
-test_gui(root)
+TestGUI(root)
 root.mainloop()
