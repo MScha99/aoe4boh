@@ -2,12 +2,13 @@ import cv2
 import numpy as np
 import pytesseract
 from screeninfo import get_monitors
-from ocr import ocr_onto_cropped_areas
+
 from screencap import capture_window
 import time  # Import the time module
 from tkinter import *
 from tkinter import ttk
-from gui import TestGUI
+# from gui import TestGUI
+from gui import MainWindow
 
 monitors = get_monitors()
 
@@ -27,5 +28,6 @@ monitors = get_monitors()
 # print(results['population'])
  
 root = Tk()
-TestGUI(root)
+# TestGUI(root, consecutive_readings=2)
+MainWindow(root)
 root.mainloop()
