@@ -1,0 +1,1 @@
+monitors = get_monitors()

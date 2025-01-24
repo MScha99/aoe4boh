@@ -7,15 +7,14 @@ import os
 
 
 class MainWindow:
-    def __init__(self, root):
+    def __init__(self, root, settings, controller):
         self.root = root
+        self.settings=settings
+        self.controller=controller
         self.root.title("AoE4 build order helper")
 
-        self.root.geometry('450x400')  # Set your desired window size
-
-        # Center the window on the screen
+        self.root.geometry('500x500')  # default window size        
         self.center_window()
-
         self.setup_ui()
 
     def setup_ui(self):
@@ -41,7 +40,7 @@ class MainWindow:
         notebook.grid(column=0, row=0, sticky=(N, W, E, S), padx=5)
 
         # Create instances of each tab
-        tab1 = OcrTab(notebook)
+        tab1 = OcrTab(notebook, self.settings, self.controller)
         tab2 = TemplateTab(notebook)
         tab1.configure(padding=20)
         tab2.configure(padding=20)

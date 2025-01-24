@@ -70,11 +70,17 @@ worker_location_on_screen = {
         "height": (26 / 1080) * 100
     },
 
+    # "gold_worker": {
+    #     "x": (136 / 1920) * 100,
+    #     "y": (989 / 1080) * 100,
+    #     "width": (45 / 1920) * 100,
+    #     "height": (26 / 1080) * 100
+    # },
     "gold_worker": {
         "x": (136 / 1920) * 100,
-        "y": (989 / 1080) * 100,
+        "y": (984 / 1080) * 100,
         "width": (45 / 1920) * 100,
-        "height": (26 / 1080) * 100
+        "height": (30 / 1080) * 100
     },
 
     "stone_worker": {
@@ -108,6 +114,7 @@ resource_location_on_screen = {
         "height": (30 / 1080) * 100
     },
 
+
     "stone": {
         "x": (33 / 1920) * 100,
         "y": (1031 / 1080) * 100,
@@ -116,69 +123,21 @@ resource_location_on_screen = {
     },
 
 }
+# four distinct pixels that are shared among all villager images, witth xy that specifies their
+# position relative to each other
+# (relative_x, relative_y, expected_color)
+# The first pixel is the reference point (relative_x = 0, relative_y = 0)
 
-# worker_location_on_screen = {
-#     "population": {
-#         "x": 1.0270270270270245,
-#         "y": 1.4563106796116916,
-#         "width": 42.7837837837838,
-#         "height": 12.135922330097086
-#     },
-#     "idle_worker": {
-#         "x": 68.91891891891892,
-#         "y": 0.0,
-#         "width": 27.027027027027028,
-#         "height": 13.106796116504855
-#     },
-#     "food_worker": {
-#         "x": 69.59459459459461,
-#         "y": 27.184466019417574,
-#         "width": 30.40540540540541,
-#         "height": 12.62135922330097
-#     },
-#     "wood_worker": {
-#         "x": 69.59459459459461,
-#         "y": 45.08737864077677,
-#         "width": 30.40540540540541,
-#         "height": 12.62135922330097
-#     },
-#     "gold_worker": {
-#         "x": 69.59459459459461,
-#         "y": 64.99029126213595,
-#         "width": 30.40540540540541,
-#         "height": 12.62135922330097
-#     },
-#     "stone_worker": {
-#         "x": 69.59459459459461,
-#         "y": 83.43689320388353,
-#         "width": 30.40540540540541,
-#         "height": 12.62135922330097
-#     }
-# }
+# villager_distinct_pixels = [
+#     (0, 0, (22, 25, 38)),    # Reference point (top-left)
+#     (20, 1, (47, 61, 81)),   # Relative to reference point
+#     (27, 3, (34, 43, 59)),   # Relative to reference point
+#     (35, 31, (21, 24, 36)),  # Relative to reference point
+# ]
 
-# resource_location_on_screen = {
-#     "food": {
-#         "x": 0.0,
-#         "y": 27.184466019417574,
-#         "width": 40.54054054054055,
-#         "height": 14.563106796116504
-#     },
-#     "wood": {
-#         "x": 0.0,
-#         "y": 47.08737864077677,
-#         "width": 40.54054054054055,
-#         "height": 14.563106796116504
-#     },
-#     "gold": {
-#         "x": 0.0,
-#         "y": 66.99029126213595,
-#         "width": 40.54054054054055,
-#         "height": 14.563106796116504
-#     },
-#     "stone": {
-#         "x": 0.0,
-#         "y": 85.43689320388353,
-#         "width": 40.54054054054055,
-#         "height": 14.563106796116504
-#     }
-# }
+villager_distinct_pixels = [
+    (0, 0, (38, 25, 22)),    # Reference point (top-left)
+    (20, 1, (81, 61, 47)),   # Relative to reference point
+    (27, 3, (59, 43, 34)),   # Relative to reference point
+    (35, 31, (36, 24, 21)),  # Relative to reference point
+]

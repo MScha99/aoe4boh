@@ -9,25 +9,20 @@ from tkinter import *
 from tkinter import ttk
 # from gui import TestGUI
 from gui import MainWindow
+from villager_locator import VillagerLocator
+from settings import Settings
+from controller import Controller
 
-monitors = get_monitors()
-
-
-# start_time_capture = time.perf_counter()  # Start timing
-# for i in range(20):
-#     print(ocr_onto_cropped_areas(capture_window()))
-# end_time_capture = time.perf_counter()  # End timing
-# elapsed_time_capture = end_time_capture - start_time_capture  # Calculate elapsed time
-# print(f"Time taken for capture-based loop: {elapsed_time_capture:.4f} seconds")
+# monitors = get_monitors()
 
 
-# print(ocr_onto_cropped_areas(capture_window(), debug=True))
-# print(ocr_onto_cropped_areas(cv2.imread('jap.png'), debug=True))
+# villagerlocator=VillagerLocator()
 
-# results = (ocr_onto_cropped_areas(cv2.imread('jap.png'), debug=False))
-# print(results['population'])
- 
+# villagerlocator.find_villager_portrait(capture_window())
+
+# print(villagerlocator.find_villager_portrait(cv2.imread("crop_jap.png")))
+settings=Settings()
+controller=Controller(settings)
 root = Tk()
-# TestGUI(root, consecutive_readings=2)
-MainWindow(root)
+main_window=MainWindow(root, settings, controller)
 root.mainloop()
