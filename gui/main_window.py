@@ -2,7 +2,7 @@
 from tkinter import *
 from tkinter import ttk, font
 from .ocr_tab import OcrTab
-from .template_tab import TemplateTab
+from .settings_tab import SettingsTab
 import os
 
 
@@ -41,13 +41,13 @@ class MainWindow:
 
         # Create instances of each tab
         tab1 = OcrTab(notebook, self.settings, self.controller)
-        tab2 = TemplateTab(notebook)
+        tab2 = SettingsTab(notebook, self.settings)
         tab1.configure(padding=20)
         tab2.configure(padding=20)
 
         # Add tabs to the notebook
         notebook.add(tab1, text="OCR")
-        notebook.add(tab2, text="Templates")
+        notebook.add(tab2, text="Settings")
 
 
     def center_window(self):

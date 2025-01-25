@@ -4,5 +4,5 @@
     "tolerance": 0,
     "enable_ocr": true,
     "enable_worker_producing": true,
-    "debug_static_image": false
+    "debug_static_image": true
 }

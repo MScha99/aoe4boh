@@ -1,33 +1,29 @@
-# gui/ocr_tab.py
 from tkinter import *
 from tkinter import ttk
 
 
 class OcrTab(ttk.Frame):
     def __init__(self, parent, settings, controller):
+        """
+        Initialize the OcrTab.
+
+        Args:
+            parent: The parent widget (usually a notebook or frame).
+            settings (Settings): An instance of the Settings class.
+            controller (Controller): An instance of the Controller class.
+        """
         super().__init__(parent)
         self.settings = settings
         self.controller = controller
 
-        # import settings into BooleanVar that are tied to checkboxes to easy tracking of changes
-        self.enable_ocr = BooleanVar(value=self.settings.enable_ocr)
-        self.enable_worker_producing = BooleanVar(
-            value=self.settings.enable_worker_producing)
-        self.debug_static_image_var = BooleanVar(
-            value=self.settings.debug_static_image)
-
-        # when the value of the variable changes, update the settings
-        self.enable_ocr.trace_add(
-            "write", lambda *args: setattr(self.settings, "enable_ocr", self.enable_ocr.get()))
-        self.enable_worker_producing.trace_add("write", lambda *args: setattr(
-            self.settings, "enable_worker_producing", self.enable_worker_producing.get()))
-        self.debug_static_image_var.trace_add("write", lambda *args: setattr(
-            self.settings, "debug_static_image", self.debug_static_image_var.get()))
-
+        # Set up the UI
         self.setup_ui()
         self.start_gui_update_loop()
 
     def setup_ui(self):
+        """
+        Set up the user interface for the OCR tab.
+        """
         # Define StringVars for each label
         self.population = StringVar()
         self.idle_workers = StringVar()
@@ -37,68 +33,47 @@ class OcrTab(ttk.Frame):
         self.stone_workers = StringVar()
         self.worker_producing = StringVar()
 
+        # Configure columns to allocate space properly
+        self.columnconfigure(0, weight=1)  # Column 0 (labels) will expand
+        self.columnconfigure(1, weight=1)  # Column 1 (values) will expand
+
         # Create labels and associate them with StringVars
-        ttk.Checkbutton(self, text="Enable OCR", variable=self.enable_ocr,
-                        onvalue=True, offvalue=False).grid(column=1, row=0, sticky=(W, E))
+        ttk.Label(self, text="Worker:").grid(column=0, row=0, sticky=W)
+        ttk.Label(self, textvariable=self.worker_producing).grid(column=1, row=0, sticky=W)
 
-        ttk.Checkbutton(self, text="Enable worker checking", variable=self.enable_worker_producing,
-                        onvalue=True, offvalue=False).grid(column=1, row=1, sticky=(W, E))
+        ttk.Label(self, text="Populacja:").grid(column=0, row=1, sticky=W)
+        ttk.Label(self, textvariable=self.population).grid(column=1, row=1, sticky=W)
 
-        ttk.Label(self, text="Worker:").grid(
-            column=1, row=2, columnspan=2, sticky=(W, E))
-        ttk.Label(self, textvariable=self.worker_producing, width=4).grid(
-            column=2, row=2, columnspan=2, sticky=(W, E))
+        ttk.Label(self, text="Idle Workers:").grid(column=0, row=2, sticky=W)
+        ttk.Label(self, textvariable=self.idle_workers).grid(column=1, row=2, sticky=W)
 
-        ttk.Label(self, text="Populacja").grid(column=1, row=3, sticky=(W, E))
-        ttk.Label(self, textvariable=self.population).grid(
-            column=2, row=3, sticky=(W, E))
+        ttk.Label(self, text="Food Workers:").grid(column=0, row=3, sticky=W)
+        ttk.Label(self, textvariable=self.food_workers).grid(column=1, row=3, sticky=W)
 
-        ttk.Label(self, text="Idle Workers").grid(
-            column=1, row=4, sticky=(W, E))
-        ttk.Label(self, textvariable=self.idle_workers, width=4).grid(
-            column=2, row=4, sticky=(W, E))
+        ttk.Label(self, text="Wood Workers:").grid(column=0, row=4, sticky=W)
+        ttk.Label(self, textvariable=self.wood_workers).grid(column=1, row=4, sticky=W)
 
-        ttk.Label(self, text="Food Workers").grid(
-            column=1, row=5, sticky=(W, E))
-        ttk.Label(self, textvariable=self.food_workers, width=4).grid(
-            column=2, row=5, sticky=(W, E))
+        ttk.Label(self, text="Gold Workers:").grid(column=0, row=5, sticky=W)
+        ttk.Label(self, textvariable=self.gold_workers).grid(column=1, row=5, sticky=W)
 
-        ttk.Label(self, text="Wood Workers").grid(
-            column=1, row=6, sticky=(W, E))
-        ttk.Label(self, textvariable=self.wood_workers, width=4).grid(
-            column=2, row=6, sticky=(W, E))
-
-        ttk.Label(self, text="Gold Workers").grid(
-            column=1, row=7, sticky=(W, E))
-        ttk.Label(self, textvariable=self.gold_workers, width=4).grid(
-            column=2, row=7, sticky=(W, E))
-
-        ttk.Label(self, text="Stone Workers").grid(
-            column=1, row=8, sticky=(W, E))
-        ttk.Label(self, textvariable=self.stone_workers,
-                  width=4).grid(column=2, row=8, sticky=(W, E))
-
-        ttk.Checkbutton(self, text="Use Static Image", variable=self.debug_static_image_var,).grid(
-            column=1, row=9, sticky=(W, E))
+        ttk.Label(self, text="Stone Workers:").grid(column=0, row=6, sticky=W)
+        ttk.Label(self, textvariable=self.stone_workers).grid(column=1, row=6, sticky=W)
 
         # Continuous OCR button
-        self.continuous_button_text = StringVar(
-            value="Start Scanning")  # Dynamic button text
-        ttk.Button(self, textvariable=self.continuous_button_text,
-                   command=self.toggle_continuous_ocr).grid(column=3, row=9, sticky=(W, E))
+        self.continuous_button_text = StringVar(value="Start Scanning")  # Dynamic button text
+        ttk.Button(self, textvariable=self.continuous_button_text, command=self.toggle_continuous_ocr).grid(column=0, row=7, columnspan=2, sticky=(W, E))
 
         # Configure padding for all children
         for child in self.winfo_children():
             child.grid_configure(padx=5, pady=5)
 
         # Bind Enter key to perform OCR
-        self.master.bind(
-            "<Return>", lambda event: self.get_results_from_controller())
-
-        # Start the GUI update loop
-        # self.master.after(100, self.update_gui)
+        self.master.bind("<Return>", lambda event: self.get_results_from_controller())
 
     def get_results_from_controller(self):
+        """
+        Retrieve OCR and villager portrait results from the controller and update the GUI.
+        """
         try:
             # Get OCR results from the queue
             results = self.controller.get_ocr_results()
