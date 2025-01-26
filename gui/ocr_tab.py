@@ -39,36 +39,46 @@ class OcrTab(ttk.Frame):
 
         # Create labels and associate them with StringVars
         ttk.Label(self, text="Worker:").grid(column=0, row=0, sticky=W)
-        ttk.Label(self, textvariable=self.worker_producing).grid(column=1, row=0, sticky=W)
+        ttk.Label(self, textvariable=self.worker_producing).grid(
+            column=1, row=0, sticky=W)
 
         ttk.Label(self, text="Populacja:").grid(column=0, row=1, sticky=W)
-        ttk.Label(self, textvariable=self.population).grid(column=1, row=1, sticky=W)
+        ttk.Label(self, textvariable=self.population).grid(
+            column=1, row=1, sticky=W)
 
         ttk.Label(self, text="Idle Workers:").grid(column=0, row=2, sticky=W)
-        ttk.Label(self, textvariable=self.idle_workers).grid(column=1, row=2, sticky=W)
+        ttk.Label(self, textvariable=self.idle_workers).grid(
+            column=1, row=2, sticky=W)
 
         ttk.Label(self, text="Food Workers:").grid(column=0, row=3, sticky=W)
-        ttk.Label(self, textvariable=self.food_workers).grid(column=1, row=3, sticky=W)
+        ttk.Label(self, textvariable=self.food_workers).grid(
+            column=1, row=3, sticky=W)
 
         ttk.Label(self, text="Wood Workers:").grid(column=0, row=4, sticky=W)
-        ttk.Label(self, textvariable=self.wood_workers).grid(column=1, row=4, sticky=W)
+        ttk.Label(self, textvariable=self.wood_workers).grid(
+            column=1, row=4, sticky=W)
 
         ttk.Label(self, text="Gold Workers:").grid(column=0, row=5, sticky=W)
-        ttk.Label(self, textvariable=self.gold_workers).grid(column=1, row=5, sticky=W)
+        ttk.Label(self, textvariable=self.gold_workers).grid(
+            column=1, row=5, sticky=W)
 
         ttk.Label(self, text="Stone Workers:").grid(column=0, row=6, sticky=W)
-        ttk.Label(self, textvariable=self.stone_workers).grid(column=1, row=6, sticky=W)
+        ttk.Label(self, textvariable=self.stone_workers).grid(
+            column=1, row=6, sticky=W)
 
         # Continuous OCR button
-        self.continuous_button_text = StringVar(value="Start Scanning")  # Dynamic button text
-        ttk.Button(self, textvariable=self.continuous_button_text, command=self.toggle_continuous_ocr).grid(column=0, row=7, columnspan=2, sticky=(W, E))
+        self.continuous_button_text = StringVar(
+            value="Start Scanning")  # Dynamic button text
+        ttk.Button(self, textvariable=self.continuous_button_text, command=self.toggle_continuous_ocr).grid(
+            column=0, row=7, columnspan=2, sticky=(W, E))
 
         # Configure padding for all children
         for child in self.winfo_children():
             child.grid_configure(padx=5, pady=5)
 
         # Bind Enter key to perform OCR
-        self.master.bind("<Return>", lambda event: self.get_results_from_controller())
+        self.master.bind(
+            "<Return>", lambda event: self.get_results_from_controller())
 
     def get_results_from_controller(self):
         """

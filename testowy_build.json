@@ -1,0 +1,23 @@
+[
+    {
+        "instructions": "Step 1: Early Food Focus",
+        "desired_food_workers": 8,
+        "desired_wood_workers": 4,
+        "desired_gold_workers": 0,
+        "desired_stone_workers": "5"
+    },
+    {
+        "instructions": "Step 2: Transition to Wood::ability-champion-companions-1:: asda  ad sad ada ad ad as dasd asd asasd asasd  adsasdasda sdaasd asdasdasd asdd asasd a sdas dasd asd  asdasd ad chuj",
+        "desired_food_workers": 6,
+        "desired_wood_workers": "8",
+        "desired_gold_workers": "0",
+        "desired_stone_workers": "6"
+    },
+    {
+        "instructions": "Step 3: Gold for Age-Up",
+        "desired_food_workers": "6",
+        "desired_wood_workers": 6,
+        "desired_gold_workers": 4,
+        "desired_stone_workers": "7"
+    }
+]

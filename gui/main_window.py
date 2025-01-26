@@ -3,19 +3,21 @@ from tkinter import *
 from tkinter import ttk, font
 from .ocr_tab import OcrTab
 from .settings_tab import SettingsTab
+from .build_order_tab import BuildOrderTab
 import os
 
 
 class MainWindow:
-    def __init__(self, root, settings, controller):
+    def __init__(self, root, settings, controller, emoticons):
         self.root = root
         self.settings=settings
         self.controller=controller
+        self.emoticons=emoticons
         self.root.title("AoE4 build order helper")
-
         self.root.geometry('500x500')  # default window size        
         self.center_window()
         self.setup_ui()
+        
 
     def setup_ui(self):
         # setup theme
@@ -41,13 +43,18 @@ class MainWindow:
 
         # Create instances of each tab
         tab1 = OcrTab(notebook, self.settings, self.controller)
-        tab2 = SettingsTab(notebook, self.settings)
+        tab2 = BuildOrderTab(notebook, self.emoticons)
+        tab3 = SettingsTab(notebook, self.settings)
+       
         tab1.configure(padding=20)
         tab2.configure(padding=20)
+        tab3.configure(padding=20)
 
         # Add tabs to the notebook
         notebook.add(tab1, text="OCR")
-        notebook.add(tab2, text="Settings")
+        notebook.add(tab2, text="Build Order")
+        notebook.add(tab3, text="Settings")
+        
 
 
     def center_window(self):
