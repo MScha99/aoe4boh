@@ -1,23 +1,31 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from data import sample_build_order
 import json
 from fuzzywuzzy import process
+from .instructions_renderer import InstructionsRenderer
+from .text_editor_popup import TextEditorPopup
 
 
 class BuildOrderEditor:
-    def __init__(self, parent, emoticons):
+    def __init__(self, parent, emoticons, build_file):
         self.window = Toplevel(parent)
         self.window.title("Build Order Editor")
         self.window.geometry("900x600")
-        self.build_order = sample_build_order
+        self.build_order = None
         self.emoticons = emoticons
         self.window.configure(bg="gray20")
-
-        self.filename = "testowy"
+        self.instructions_width = 300
+        self.instructions_height = 180
+        self.build_file = build_file
         self.active_entry = None
         self.emote_menu = None
         self.image_references = []
+
+        if not self.load_build_order():
+            return
+        self.text_editor_popup = TextEditorPopup(
+            self.window, self.emoticons, self.build_order, self)
         self.create_widgets()
 
     def create_widgets(self):
@@ -28,9 +36,9 @@ class BuildOrderEditor:
 
         # Save and Load buttons
         ttk.Button(self.window, text="Save", command=self.save_build_order).grid(
-            column=0, row=1, sticky=(W, E), padx=5, pady=5
+            column=0, row=1, sticky=(E), padx=5, pady=5
         )
-        ttk.Button(self.window, text="Load", command=self.load_build_order).grid(
+        ttk.Button(self.window, text="Quit", command=self.load_build_order).grid(
             column=1, row=1, sticky=(W, E), padx=5, pady=5
         )
 
@@ -76,75 +84,30 @@ class BuildOrderEditor:
             # Add step details (editable labels)
             for col, key in enumerate(["instructions", "desired_food_workers", "desired_wood_workers", "desired_gold_workers", "desired_stone_workers"], start=2):
                 if key == "instructions":
-                    # Create a Canvas widget for the instructions column
-                    text_canvas_width = 300
-                    text_canvas_height = 180
-                    canvas = Canvas(self.table_frame, width=text_canvas_width, height=text_canvas_height, bg="white", bd=0, highlightthickness=0)
-                    canvas.grid(column=col, row=row, padx=5, pady=5, sticky=(W, E, N, S))
+                    canvas = Canvas(self.table_frame, width=self.instructions_width,
+                                    height=self.instructions_height, bg='white', bd=0, highlightthickness=0)
+                    canvas.grid(column=col, row=row, padx=5,
+                                pady=5, sticky=(W, E, N, S))
 
-                    # Insert the instructions into the Canvas
-                    instructions = step[key]
-                    parts = instructions.split(" ")
-
-                    # Initialize starting positions
-                    x_offset = 5  # Starting x position for text/images
-                    y_offset = 10  # Starting y position for text/images
-                    line_height = 0  # Tracks the height of the current line
-
-                    for part in parts:
-                        emoticon_key = f"{part}"
-                        if emoticon_key in self.emoticons:
-                            # If the part is an emoticon, insert its image into the Canvas
-                            emote_image = self.emoticons[emoticon_key]
-                            self.image_references.append(emote_image)
-                            image_width = 48  # Fixed size for emoticons
-                            image_height = 48  # Fixed size for emoticons
-
-                            # Check if the image exceeds the canvas width
-                            if x_offset + image_width > text_canvas_width:
-                                x_offset = 5  # Move to the next line
-                                y_offset += line_height + 5  # Adjust y_offset for the new line
-                                line_height = 0  # Reset line height
-
-                            # Draw the image
-                            canvas.create_image(x_offset, y_offset, image=emote_image, anchor="nw")
-                            x_offset += image_width + 5  # Adjust x_offset for the next item
-                            line_height = max(line_height, image_height)  # Update line height
-
-                        else:
-                            # If the part is text, insert it into the Canvas
-                            text_id = canvas.create_text(x_offset, y_offset, text=part, anchor="nw", font=("Sergoe UI Variable", 26))
-                            text_bbox = canvas.bbox(text_id)  # Get the bounding box of the text
-                            text_width = text_bbox[2] - text_bbox[0]  # Calculate text width
-
-                            # Check if the text exceeds the canvas width
-                            if x_offset + text_width > text_canvas_width:
-                                x_offset = 5  # Move to the next line
-                                y_offset += line_height + 5  # Adjust y_offset for the new line
-                                line_height = 0  # Reset line height
-
-                                # Redraw the text on the new line
-                                canvas.delete(text_id)  # Remove the previous text
-                                text_id = canvas.create_text(x_offset, y_offset, text=part, anchor="nw", font=("Sergoe UI Variable", 26))
-                                text_bbox = canvas.bbox(text_id)  # Get the new bounding box
-                                text_width = text_bbox[2] - text_bbox[0]  # Recalculate text width
-
-                            # Adjust x_offset for the next item
-                            x_offset += text_width + 5
-                            line_height = max(line_height, text_bbox[3] - text_bbox[1])  # Update line height
-
-                    # Bind double-click to open a popup window
-                    canvas.bind("<Double-1>", lambda e, r=row, c=col: self.open_popup(r, c))
+                    def double_click_callback(
+                        e, r=row, c=col): return self.open_popup(r, c)
+                    instructions_renderer = InstructionsRenderer(
+                        canvas, self.emoticons, self.instructions_width, double_click_callback)
+                    instructions_renderer.render_text_with_emoticons(step[key])
                 else:
                     # Set fixed width for resource columns
-                    label = ttk.Label(self.table_frame, text=step[key], anchor="center", width=5)
-                    label.grid(column=col, row=row, padx=5, pady=5, sticky=(W, E))
-                    label.bind("<Double-1>", lambda e, r=row, c=col: self.edit_cell(r, c))
+                    label = ttk.Label(self.table_frame,
+                                      text=step[key], anchor="center", width=5)
+                    label.grid(column=col, row=row, padx=5,
+                               pady=5, sticky=(W, E))
+                    label.bind("<Double-1>", lambda e, r=row,
+                               c=col: self.edit_cell(r, c))
 
                     # Highlight on hover (restored logic)
-                    label.bind("<Enter>", lambda e, l=label: l.configure(background="lightgray"))
-                    label.bind("<Leave>", lambda e, l=label: l.configure(background=""))
-
+                    label.bind("<Enter>", lambda e,
+                               l=label: l.configure(background="lightgray"))
+                    label.bind("<Leave>", lambda e,
+                               l=label: l.configure(background=""))
 
             # Add up/down arrows for moving rows
             button_frame = ttk.Frame(self.table_frame)
@@ -167,144 +130,9 @@ class BuildOrderEditor:
         ttk.Button(self.table_frame, text="+", width=2,
                    command=lambda: self.add_step(add_row)).grid(column=0, row=add_row, padx=5, pady=5)
 
-    # Rest of the methods remain unchanged...
-
     def open_popup(self, row, col):
-        """Open a Toplevel popup window when the Canvas is double-clicked."""
-        if self.active_entry:
-            return
-
-        popup = Toplevel(self.window)
-        popup.geometry("700x350")
-        popup.overrideredirect(True)  # Hide window title bar
-
-        # Center popup on the parent window
-        self.window.update_idletasks()
-        parent_x = self.window.winfo_x()
-        parent_y = self.window.winfo_y()
-        parent_width = self.window.winfo_width()
-        parent_height = self.window.winfo_height()
-        popup_width = 700
-        popup_height = 350
-        x_position = parent_x + (parent_width - popup_width) // 2
-        y_position = parent_y + (parent_height - popup_height) // 2
-        popup.geometry(f"{popup_width}x{popup_height}+{x_position}+{y_position}")
-
-        popup.configure(bg="gray30", borderwidth=2, relief="ridge")  # Make it stand out
-
-        # Main popup frame
-        popup_frame = ttk.Frame(popup, padding=10)
-        popup_frame.pack(fill=BOTH, expand=True)
-
-        # Configure grid weights for popup_frame
-        popup_frame.grid_columnconfigure(0, weight=1)  # Text widget column
-        popup_frame.grid_columnconfigure(1, weight=0)  # Emoticon frame column (no expansion)
-        popup_frame.grid_rowconfigure(0, weight=1)     # Main content row
-        popup_frame.grid_rowconfigure(1, weight=0)     # Button row
-
-        # Text widget for instructions
-        text_widget = Text(popup_frame, wrap=WORD, width=40, height=10, font=("Sergoe UI Variable", 14))
-        text_widget.grid(column=0, row=0, padx=5, pady=5, sticky=(W, E, N, S))
-
-        step = self.build_order[row - 1]
-        text_widget.insert(END, step["instructions"])
-
-        def enforce_character_limit(event=None):
-            if len(text_widget.get("1.0", END)) > 301:
-                text_widget.delete("1.0 + 300 chars", END)
-
-        text_widget.bind("<KeyRelease>", enforce_character_limit)
-
-        # Frame for emoticons with scrollbar
-        emoticon_frame = ttk.Frame(popup_frame)
-        emoticon_frame.grid(column=1, row=0, padx=5, pady=5, sticky=(N, S))
-
-        # Add a search bar at the top of emoticon_frame
-        search_var = StringVar()
-        search_entry = ttk.Entry(emoticon_frame, textvariable=search_var, font=("Sergoe UI Variable", 12))
-        search_entry.pack(fill=X, padx=5, pady=5)
-
-        # Add a Canvas and Scrollbar to emoticon_frame
-        canvas = Canvas(emoticon_frame, width=200, height=250)  # Adjust width and height as needed
-        scrollbar = ttk.Scrollbar(emoticon_frame, orient=VERTICAL, command=canvas.yview)
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        # Pack the scrollbar and canvas
-        scrollbar.pack(side=RIGHT, fill=Y)
-        canvas.pack(side=LEFT, fill=BOTH, expand=True)
-
-        # Bind mouse scroll wheel to the canvas
-        def on_mouse_wheel(event):
-            canvas.yview_scroll(-1 * (event.delta // 120), "units")  # For Windows and macOS
-            # canvas.yview_scroll(-1 * (event.delta), "units")  # For Linux
-
-        canvas.bind_all("<MouseWheel>", on_mouse_wheel)  # For Windows and macOS
-
-        # Create a frame inside the canvas to hold the emoticon buttons
-        inner_frame = ttk.Frame(canvas)
-        canvas.create_window((0, 0), window=inner_frame, anchor=NW)
-
-        # Configure the inner frame to update the scroll region
-        def update_scroll_region(event):
-            canvas.configure(scrollregion=canvas.bbox("all"))
-
-        inner_frame.bind("<Configure>", update_scroll_region)
-
-        # Function to update emoticons based on search term
-        def update_emoticons(search_term):
-            # Clear the inner frame
-            for widget in inner_frame.winfo_children():
-                widget.destroy()
-
-            # Perform fuzzy search on emoticon keys
-            if search_term:
-                matches = process.extract(search_term, self.emoticons.keys(), limit=len(self.emoticons))
-                filtered_emoticons = {key: self.emoticons[key] for key, score in matches if score > 70}  # Adjust threshold as needed
-            else:
-                filtered_emoticons = self.emoticons  # Show all emoticons if search term is empty
-
-            # Add filtered emoticon buttons to the inner frame
-            row_i = 0
-            col_i = 0
-            for key, emote_image in filtered_emoticons.items():
-                button = ttk.Button(inner_frame, image=emote_image, command=lambda k=key: self.insert_emote(
-                    text_widget, k))
-                button.grid(column=col_i, row=row_i, padx=2, pady=2, sticky="")
-                col_i += 1
-                if col_i > 2:
-                    col_i = 0
-                    row_i += 1
-            canvas.yview_moveto(0)
-
-        # Bind the search entry to update emoticons dynamically
-        search_var.trace_add("write", lambda *args: update_emoticons(search_var.get()))
-
-        # Initialize with all emoticons
-        update_emoticons("")
-
-        # Save and Cancel buttons
-        button_frame = ttk.Frame(popup_frame)
-        button_frame.grid(column=0, row=1, columnspan=2, pady=10, sticky=(W, E))
-
-        ttk.Button(button_frame, text="Save", command=lambda: self.save_popup_changes(
-            row, col, text_widget, popup)).pack(side=LEFT, padx=5)
-        ttk.Button(button_frame, text="Cancel", command=lambda: self.close_popup(
-            popup)).pack(side=LEFT, padx=5)
-
-        self.active_entry = type(
-            "ActiveEntry", (), {"widget": text_widget, "row": row, "col": col})
-
-    def close_popup(self, popup):
-        """Close the popup and reset active entry."""
-        popup.destroy()
-        self.active_entry = None
-
-    def save_popup_changes(self, row, col, text_widget, popup):
-        """Save changes from the popup and close it."""
-        step = self.build_order[row - 1]
-        step["instructions"] = text_widget.get("1.0", END).strip()
-        self.populate_table()
-        self.close_popup(popup)
+        """Open a popup window for editing instructions."""
+        self.text_editor_popup.open_popup(row, col)
 
     def edit_cell(self, row, col):
         """Handle double-click events to make cells editable."""
@@ -364,36 +192,6 @@ class BuildOrderEditor:
             # Track the active Entry widget
             self.active_entry = type(
                 "ActiveEntry", (), {"widget": entry, "row": row, "col": col})
-
-    def show_emote_menu(self, text_widget):
-        """Show a popup menu with emoticons."""
-        self.emote_menu = Toplevel(self.window)
-        self.emote_menu.title("Select Emote")
-        self.emote_menu.geometry("200x100")
-        self.emote_menu.transient(self.window)  # Attach to the main window
-
-        # Add emoticons to the menu
-        for key, emote_image in self.emoticons.items():
-            emote_button = ttk.Button(self.emote_menu, image=emote_image,
-                                      command=lambda k=key: self.insert_emote(text_widget, k))
-            emote_button.pack(side="top", padx=5, pady=5)
-
-        # Close the menu when clicking outside
-        self.emote_menu.bind("<FocusOut>", lambda e: self.close_emote_menu())
-
-    def close_emote_menu(self):
-        """Close the emote menu."""
-        if self.emote_menu:
-            self.emote_menu.destroy()
-            self.emote_menu = None
-
-    def insert_emote(self, text_widget, emote_key):
-        """Insert the selected emote into the Text widget."""
-        text_widget.insert(
-            # Insert the emote key in the correct format
-            "insert", f"{emote_key}")
-        text_widget.focus()  # Return focus to the Text widget
-        self.close_emote_menu()  # Close the emote menu after inserting
 
     def validate_integer(self, value):
         """Validate that the input is an integer and no more than 2 digits."""
@@ -458,12 +256,26 @@ class BuildOrderEditor:
             self.populate_table()  # Refresh the table
 
     def save_build_order(self):
-        """Save the build order to a JSON file."""
-        with open(self.filename + "_build.json", "w") as file:
+        """Save the build order to a JSON file specified in self.build_file."""
+        with open(self.build_file, "w") as file:
             json.dump(self.build_order, file, indent=4)
+        self.populate_table()
 
     def load_build_order(self):
         """Load the build order from a JSON file."""
-        with open(self.filename + "_build.json", "r") as file:
-            self.build_order = json.load(file)
-            self.populate_table()  # Refresh the table
+        try:
+            with open(self.build_file, "r") as file:
+                self.build_order = json.load(file)
+                return True
+                # self.populate_table()  # Refresh the table
+        except FileNotFoundError:
+            self.window.destroy()
+            messagebox.showerror("Error", "this file does not exist")
+            return False
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            # Display an error message in a dialog box
+            self.window.destroy()
+            messagebox.showerror(
+                "Error", f"Failed to load the build order, your build order file might be corrupted or written improperly.\n\n{str(e)}")
+            return False

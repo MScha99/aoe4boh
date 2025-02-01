@@ -132,6 +132,89 @@ villager_distinct_pixels = [
     (35, 31, (36, 24, 21)),  # Relative to reference point
 ]
 
+civs = {
+    "Abbasid": {
+        "flag": ":abb:",
+
+        "default_build": None
+    },
+    "Ayyubids": {
+        "flag": ":ayy:",
+
+        "default_build": None
+    },
+    "Byzantines": {
+        "flag": ":byz:",
+
+        "default_build": None
+    },
+    "Chinese": {
+        "flag": ":chi:",
+
+        "default_build": None
+    },
+    "Delhi Sultanate": {
+        "flag": ":del:",
+
+        "default_build": None
+    },
+    "English": {
+        "flag": ":eng:",
+
+        "default_build": None
+    },
+    "French": {
+        "flag": ":fre:",
+
+        "default_build": None
+    },
+    "Holy Roman Empire": {
+        "flag": ":hre:",
+
+        "default_build": None
+    },
+    "Japanese": {
+        "flag": ":jap:",
+
+        "default_build": None
+    },
+    "Jeanne d'Arc": {
+        "flag": ":jda:",
+
+        "default_build": None
+    },
+    "Mali": {
+        "flag": ":mal:",
+
+        "default_build": None
+    },
+    "Mongols": {
+        "flag": ":mong:",
+
+        "default_build": None
+    },
+    "Order of the Dragon": {
+        "flag": ":dra:",
+
+        "default_build": None
+    },
+    "Ottomans": {
+        "flag": ":ott:",
+
+        "default_build": None
+    },
+    "Rus": {
+        "flag": ":rus:",
+
+        "default_build": None
+    },
+    "Zhu Xi's Legacy": {
+        "flag": ":zxl:",
+
+        "default_build": None
+    }
+}
+
 sample_build_order = [
     {
         "instructions": "Step 1: Early Food Focus",

@@ -12,7 +12,7 @@ from gui import MainWindow
 from villager_locator import VillagerLocator
 from settings import Settings
 from controller import Controller
-from utils import load_emoticons
+from utils import load_emoticons, setup_builds_directories
 
 # monitors = get_monitors()
 
@@ -26,5 +26,6 @@ settings=Settings()
 controller=Controller(settings)
 root = Tk()
 emoticons = load_emoticons()
+setup_builds_directories()
 main_window=MainWindow(root, settings, controller, emoticons)
 root.mainloop()
