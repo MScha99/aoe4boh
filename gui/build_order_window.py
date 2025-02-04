@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk, messagebox
+import customtkinter
 from data import sample_build_order
 import json
 from fuzzywuzzy import process
@@ -14,7 +15,7 @@ class BuildOrderEditor:
         self.window.geometry("900x600")
         self.build_order = None
         self.emoticons = emoticons
-        self.window.configure(bg="gray20")
+        self.window.configure(bg="#33393b")
         self.instructions_width = 300
         self.instructions_height = 180
         self.build_file = build_file
@@ -38,12 +39,13 @@ class BuildOrderEditor:
         ttk.Button(self.window, text="Save", command=self.save_build_order).grid(
             column=0, row=1, sticky=(E), padx=5, pady=5
         )
-        ttk.Button(self.window, text="Quit", command=self.load_build_order).grid(
+        ttk.Button(self.window, text="Quit", command=lambda: self.window.destroy()).grid(
             column=1, row=1, sticky=(W, E), padx=5, pady=5
         )
 
         # Frame to hold the table
-        self.table_frame = ttk.Frame(self.window)
+        # self.table_frame = ttk.Frame(self.window)
+        self.table_frame = customtkinter.CTkScrollableFrame(self.window, fg_color="#33393b")
         self.table_frame.grid(column=0, row=2, columnspan=8,
                               sticky=(W, E, N, S), padx=10, pady=10)
 
