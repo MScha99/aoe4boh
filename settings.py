@@ -26,7 +26,8 @@ class Settings:
             "tolerance": 0,
             "enable_ocr": True,
             "enable_worker_producing": True,
-            "debug_static_image": False
+            "debug_static_image": False,
+            "active_build_order": None
 
         }
 

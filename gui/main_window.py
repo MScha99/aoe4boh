@@ -27,7 +27,7 @@ class MainWindow:
         self.root.tk.call("package", "require", "awdark")
         style = ttk.Style()
         style.theme_use("awdark")
-        print(style.lookup("TFrame", "background"))
+       
 
         # create a frame in root window, that allows for resizing and uses grid to manage layout
         mainframe = ttk.Frame(self.root, padding="3 3 12 12")
@@ -44,7 +44,7 @@ class MainWindow:
 
         # Create instances of each tab
         tab1 = OcrTab(notebook, self.settings, self.controller)
-        tab2 = BuildOrderTab(notebook, self.emoticons)
+        tab2 = BuildOrderTab(notebook,self.settings, self.emoticons)
         tab3 = SettingsTab(notebook, self.settings)
        
         tab1.configure(padding=20)

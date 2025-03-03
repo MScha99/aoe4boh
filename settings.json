@@ -4,5 +4,6 @@
     "tolerance": 0,
     "enable_ocr": true,
     "enable_worker_producing": true,
-    "debug_static_image": true
+    "debug_static_image": false,
+    "active_build_order": "build_orders\\Abbasid\\new_build_0303115556_build.json"
 }
