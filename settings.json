@@ -5,5 +5,7 @@
     "enable_ocr": true,
     "enable_worker_producing": true,
     "debug_static_image": false,
-    "active_build_order": "build_orders\\Abbasid\\new_build_0303115556_build.json"
+    "active_build_order": "build_orders\\Chinese\\dzialajacy_chinski_build.json",
+    "overlay_font_size": 20,
+    "overlay_build_window_geometry": "338x274+1573+177"
 }
